@@ -13,6 +13,7 @@ Based on Lorro's implementation for BQ25703A driver
 #ifndef BQ25713_H
 #define BQ25713_H
 
+#include <cmath>
 #include <cstdint>
 
 namespace bq25713 {
@@ -124,7 +125,7 @@ public:
 
     virtual uint16_t minVal() const = 0;
     virtual uint16_t maxVal() const = 0;
-    virtual uint16_t resolution() const = 0;
+    virtual float resolution() const = 0;
 
     virtual uint8_t bitLenght() const = 0;
     virtual uint8_t offset() const = 0;
@@ -172,7 +173,7 @@ public:
         constraint = maxVal();
       constraint -= minVal();
       // break it down to the correct resolution (integer division)
-      constraint /= resolution();
+      constraint = round(constraint / resolution());
 
       // convert to binary word
       uint16_t binaryWord = constraint;
@@ -596,7 +597,7 @@ public:
 
       virtual uint16_t minVal() const override { return 0; }
       virtual uint16_t maxVal() const override { return 8128; }
-      virtual uint16_t resolution() const override { return 64; }
+      virtual float resolution() const override { return 64; }
 
       virtual uint8_t bitLenght() const override { return 7; }
       virtual uint8_t offset() const override { return 6; }
@@ -608,7 +609,7 @@ public:
       // the min in the doc is set to 1024, but this is wrong in practice
       virtual uint16_t minVal() const override { return 0; }
       virtual uint16_t maxVal() const override { return 19200; }
-      virtual uint16_t resolution() const override { return 8; }
+      virtual float resolution() const override { return 8; }
 
       virtual uint8_t bitLenght() const override { return 12; }
       virtual uint8_t offset() const override { return 3; }
@@ -620,7 +621,7 @@ public:
       // the min in the doc is set to 1024, but this is wrong in practice
       virtual uint16_t minVal() const override { return 0; }
       virtual uint16_t maxVal() const override { return 16128; }
-      virtual uint16_t resolution() const override { return 256; }
+      virtual float resolution() const override { return 256; }
 
       virtual uint8_t bitLenght() const override { return 6; }
       virtual uint8_t offset() const override { return 8; }
@@ -632,7 +633,7 @@ public:
 
       virtual uint16_t minVal() const override { return 50; }
       virtual uint16_t maxVal() const override { return 6400; }
-      virtual uint16_t resolution() const override { return 50; }
+      virtual float resolution() const override { return 50; }
 
       virtual uint8_t bitLenght() const override { return 7; }
       virtual uint8_t offset() const override { return 8; }
@@ -645,7 +646,7 @@ public:
 
       virtual uint16_t minVal() const override { return 50; }
       virtual uint16_t maxVal() const override { return 6400; }
-      virtual uint16_t resolution() const override { return 50; }
+      virtual float resolution() const override { return 50; }
 
       virtual uint8_t bitLenght() const override { return 7; }
       virtual uint8_t offset() const override { return 8; }
@@ -658,7 +659,7 @@ public:
 
       virtual uint16_t minVal() const override { return 3200; }
       virtual uint16_t maxVal() const override { return 19584; }
-      virtual uint16_t resolution() const override { return 64; }
+      virtual float resolution() const override { return 64; }
 
       virtual uint8_t bitLenght() const override { return 8; }
       virtual uint8_t offset() const override { return 6; }
@@ -675,19 +676,18 @@ public:
         return IBaseRegister::get();
       }
 
-      void set(uint16_t val, bool isLowVoltageMode)
+      uint16_t set(uint16_t val, bool isLowVoltageMode)
       {
         // set min value depending on low otg voltage mode
         minValue = isLowVoltageMode ? 0 : 1280;
 
-        // TODO: why do the OTG voltage is always 184mV above what is requested
-        IBaseRegister::set(val - 154);
+        return IBaseRegister::set(val);
       }
 
       // min val should be 3000mV, but in practise thats not it
       virtual uint16_t minVal() const override { return minValue; }
       virtual uint16_t maxVal() const override { return 20800; }
-      virtual uint16_t resolution() const override { return 8; }
+      virtual float resolution() const override { return 8.1328125; }
 
       virtual uint8_t bitLenght() const override { return 12; }
       virtual uint8_t offset() const override { return 2; }
@@ -702,7 +702,7 @@ public:
 
       virtual uint16_t minVal() const override { return 0; }
       virtual uint16_t maxVal() const override { return 6400; }
-      virtual uint16_t resolution() const override { return 50; }
+      virtual float resolution() const override { return 50; }
 
       virtual uint8_t bitLenght() const override { return 7; }
       virtual uint8_t offset() const override { return 8; }
