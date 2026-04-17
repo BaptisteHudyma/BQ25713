@@ -811,13 +811,15 @@ private:
   static bool readDataReg(const byte regAddress, byte* dataVal, const uint8_t arrLen)
   {
     // IMPLEMENT THIS FUNCTION
-    return i2c_readData(i2cObjectIndex, BQ25713addr, regAddress, arrLen, dataVal, usesStopBit ? 1 : 0) == 0;
+    return ::lampda::platform::i2c::i2c_readData(
+                   i2cObjectIndex, BQ25713addr, regAddress, arrLen, dataVal, usesStopBit ? 1 : 0) == 0;
   }
 
   static bool writeData(const byte regAddress, uint8_t lenght, uint8_t* data)
   {
     // IMPLEMENT THIS FUNCTION
-    return i2c_writeData(i2cObjectIndex, BQ25713addr, regAddress, lenght, data, usesStopBit ? 1 : 0) == 0;
+    return ::lampda::platform::i2c::i2c_writeData(
+                   i2cObjectIndex, BQ25713addr, regAddress, lenght, data, usesStopBit ? 1 : 0) == 0;
   }
 
   static bool writeData16(const byte regAddress, uint16_t val)
